@@ -7,18 +7,22 @@ pub fn find_two_values_that_sum_to_n(mut list: Vec<u64>, n: u64) -> Option<[u64;
     // Our algorithm below relies on having a sorted list.
     list.sort_unstable();
 
-    for potential_value in list.iter().copied() {
+    for (i, potential_value) in list.iter().copied().enumerate() {
         // We are assuming unsigned values, so if our potential value is
         // greater than n it cannot be a solution. Further, since we are
         // iterating over the values in sorted order, once we reach a value
         // which is greater than n we know there cannot be any solution, so
         // we return None.
-        if potential_value > n {
+        //
+        // Since we've sorted the values, if a single value is more than half of n we
+        // know no future value can create a solution, since all future values will
+        // be larger than our current value.
+        if potential_value > (n / 2) {
             return None;
         }
 
         let other_value = n - potential_value;
-        if list.binary_search(&other_value).is_ok() {
+        if list[i + 1..].binary_search(&other_value).is_ok() {
             return Some([potential_value, other_value]);
         }
     }
@@ -40,13 +44,16 @@ pub fn find_three_values_that_sum_to_n(mut list: Vec<u64>, n: u64) -> Option<[u6
     list.sort_unstable();
 
     for potential_value_index_1 in 0..list.len() {
-        for potential_value_index_2 in 0..list.len() {
-            // We can't use the same value twice.
-            if potential_value_index_2 == potential_value_index_1 {
-                continue;
-            }
+        let val1 = list[potential_value_index_1];
 
-            let val1 = list[potential_value_index_1];
+        // Since we've sorted the values, if a single value is more than half of n we
+        // know no future value can create a solution, since all future values will
+        // be larger than our current value.
+        if val1 > (n / 2) {
+            return None;
+        }
+
+        for potential_value_index_2 in (potential_value_index_1 + 1)..list.len() {
             let val2 = list[potential_value_index_2];
             let current_sum = val1 + val2;
 
@@ -57,7 +64,17 @@ pub fn find_three_values_that_sum_to_n(mut list: Vec<u64>, n: u64) -> Option<[u6
             }
 
             let val3 = n - current_sum;
-            if list.binary_search(&val3).is_ok() {
+
+            // Since our list is sorted, we are not going to find any value 3
+            // which is smaller than value 2, so we can skip the binary search.
+            if val3 < val2 {
+                break;
+            }
+
+            if list[potential_value_index_2 + 1..]
+                .binary_search(&val3)
+                .is_ok()
+            {
                 return Some([val1, val2, val3]);
             }
         }
