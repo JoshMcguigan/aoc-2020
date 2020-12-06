@@ -1,5 +1,7 @@
 /// Finds two values in list which sum to m in a list of length n.
 ///
+/// Assumes each value in the list is unique.
+///
 /// ## Runtime complexity
 ///
 /// O(n)
@@ -15,6 +17,13 @@ pub fn find_two_values_that_sum_to_m(list: &[usize], m: usize) -> Option<[usize;
         }
 
         let matching_value = m - value;
+
+        // If each value in the list is unique, we can't use the same value more
+        // than once.
+        if matching_value == value {
+            continue;
+        }
+
         if exists[matching_value] {
             return Some([value, matching_value]);
         }
@@ -27,9 +36,11 @@ pub fn find_two_values_that_sum_to_m(list: &[usize], m: usize) -> Option<[usize;
 
 /// Finds three values in list which sum to m in a list of length n.
 ///
+/// Assumes each value in the list is unique.
+///
 /// ## Runtime complexity
 ///
-/// O(n) to create the exists array, plus O(m^2) for the search
+/// O(n) to create the exists array, plus O(n^2) for the search => O(n^2)
 pub fn find_three_values_that_sum_to_m(list: &[usize], m: usize) -> Option<[usize; 3]> {
     // exists[i] is true if i is in list.
     let mut exists = vec![false; m + 1];
@@ -44,31 +55,27 @@ pub fn find_three_values_that_sum_to_m(list: &[usize], m: usize) -> Option<[usiz
         exists[value] = true;
     }
 
-    for potential_value_1 in 0..=m {
-        if !exists[potential_value_1] {
-            continue;
-        }
-
-        // Since we're reviewing values in increasing order, if a single value is more
-        // than half of n we know no future value can create a solution, since all
-        // future values will be larger than our current value.
-        if potential_value_1 > (m / 2) {
-            return None;
-        }
-
-        for potential_value_2 in (potential_value_1 + 1)..=m {
-            if !exists[potential_value_2] {
+    for potential_value_1 in list.iter().copied() {
+        for potential_value_2 in list.iter().copied() {
+            // If each value in the list is unique, we can't use the same value more
+            // than once.
+            if potential_value_1 == potential_value_2 {
                 continue;
             }
+
             let current_sum = potential_value_1 + potential_value_2;
 
-            // Once we've found two values that sum to more than n, we need to break
-            // out of this inner loop since we won't find a solution here.
             if current_sum > m {
-                break;
+                continue;
             }
 
             let potential_value_3 = m - current_sum;
+
+            // If each value in the list is unique, we can't use the same value more
+            // than once.
+            if potential_value_3 == potential_value_1 || potential_value_3 == potential_value_2 {
+                continue;
+            }
 
             if exists[potential_value_3] {
                 return Some([potential_value_1, potential_value_2, potential_value_3]);
@@ -118,7 +125,7 @@ mod tests {
 
         let multiplied_together = values[0] * values[1] * values[2];
 
-        assert_eq!([262, 691, 1067], values);
+        assert_eq!([1067, 691, 262], values);
         assert_eq!(193171814, multiplied_together);
     }
 }
