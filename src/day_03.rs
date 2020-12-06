@@ -51,18 +51,8 @@ fn parse_input(input: &str) -> Vec<Vec<Space>> {
 mod tests {
     use super::count_trees;
 
-    fn get_sample_input() -> &'static str {
-        r#"..##.......
-        #...#...#..
-        .#....#..#.
-        ..#.#...#.#
-        .#...##..#.
-        ..#.##.....
-        .#.#.#....#
-        .#........#
-        #.##...#...
-        #...##....#
-        .#..#...#.#"#
+    fn get_sample_input() -> String {
+        std::fs::read_to_string("input/day_03_sample").unwrap()
     }
 
     fn get_test_input() -> String {
@@ -71,7 +61,7 @@ mod tests {
 
     #[test]
     fn sample() {
-        assert_eq!(7, count_trees(get_sample_input(), 3, 1));
+        assert_eq!(7, count_trees(&get_sample_input(), 3, 1));
     }
 
     #[test]

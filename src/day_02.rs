@@ -47,10 +47,8 @@ pub fn count_valid_passwords_part2(input: &str) -> usize {
 mod tests {
     use super::{count_valid_passwords_part1, count_valid_passwords_part2};
 
-    fn get_sample_input() -> &'static str {
-        "1-3 a: abcde\
-         \n1-3 b: cdefg\
-         \n2-9 c: ccccccccc"
+    fn get_sample_input() -> String {
+        std::fs::read_to_string("input/day_02_sample").unwrap()
     }
 
     fn get_test_input() -> String {
@@ -59,7 +57,7 @@ mod tests {
 
     #[test]
     fn sample_input() {
-        assert_eq!(2, count_valid_passwords_part1(get_sample_input()));
+        assert_eq!(2, count_valid_passwords_part1(&get_sample_input()));
     }
 
     #[test]

@@ -90,8 +90,8 @@ pub fn find_three_values_that_sum_to_m(list: &[usize], m: usize) -> Option<[usiz
 mod tests {
     use super::{find_three_values_that_sum_to_m, find_two_values_that_sum_to_m};
 
-    fn get_test_input() -> Vec<usize> {
-        let input = std::fs::read_to_string("input/day_01").unwrap();
+    fn get_test_input(file: &str) -> Vec<usize> {
+        let input = std::fs::read_to_string(file).unwrap();
         let mut out: Vec<usize> = vec![];
         for value in input.lines() {
             out.push(value.parse().unwrap());
@@ -102,16 +102,15 @@ mod tests {
 
     #[test]
     fn sample_input() {
-        let sample_input = vec![1721, 979, 366, 299, 675, 1456];
-
-        let values = find_two_values_that_sum_to_m(&sample_input, 2020).unwrap();
+        let values =
+            find_two_values_that_sum_to_m(&get_test_input("input/day_01_sample"), 2020).unwrap();
 
         assert_eq!([299, 1721], values);
     }
 
     #[test]
     fn part1() {
-        let values = find_two_values_that_sum_to_m(&get_test_input(), 2020).unwrap();
+        let values = find_two_values_that_sum_to_m(&get_test_input("input/day_01"), 2020).unwrap();
 
         let multiplied_together = values[0] * values[1];
 
@@ -121,7 +120,8 @@ mod tests {
 
     #[test]
     fn part2() {
-        let values = find_three_values_that_sum_to_m(&get_test_input(), 2020).unwrap();
+        let values =
+            find_three_values_that_sum_to_m(&get_test_input("input/day_01"), 2020).unwrap();
 
         let multiplied_together = values[0] * values[1] * values[2];
 
